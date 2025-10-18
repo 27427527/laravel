@@ -37,3 +37,13 @@ Route::get('/member', [MemberController::class,'index']);
 
 // Route::get('/task/read/{id}', 'TaskController@read');
 Route::get('/task/read/{id}', 'App\Http\Controllers\TaskController@read');
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
