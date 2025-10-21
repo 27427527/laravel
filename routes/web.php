@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminViewController;
+use App\Http\Controllers\Admin\LoginController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\MemberController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,30 +20,36 @@ Route::get('/', function () {
     return 'helloworld';
 });
 
-Route::get('/index2/{name?}', function ($name='hi') {
-    return '222'.$name;
-})->where(['name'=>'[0-9]+']);
+// 后台路由
 
-Route::get('/index2', function () {
-    return '222';
-});
+Route::prefix('admin')->group(function () {
+    // 后台登录路由
+    Route::view('/login', 'admin.login')->name('admin.login');
+    Route::post('/login', [LoginController::class, 'login']);
 
+    // 后台页面路由
+    Route::middleware('admin.auth')->group(function () {
+        // 退出登录路由
+        Route::get('/logout', [LoginController::class, 'logout']);
 
+        // 后台页面路由
 
-// Route::get('user/{id}', [UserController::class, 'show']);
+        Route::controller(AdminViewController::class)->group(function () {
+            Route::get('/index', 'index');
+            Route::get('/', 'index');
+            Route::get('/welcom', 'welcom');
+        });
 
-Route::get('/task', [TaskController::class,'index']);
-Route::get('/member', [MemberController::class,'index']);
+        // 用户管理路由
 
-// Route::get('/task/read/{id}', 'TaskController@read');
-Route::get('/task/read/{id}', 'App\Http\Controllers\TaskController@read');
+        Route::resource('/user', App\Http\Controllers\Admin\UserController::class);
+        Route::put('/user/status/{id}', [App\Http\Controllers\Admin\UserController::class, 'status']);
+        Route::put('/info', [App\Http\Controllers\Admin\UserController::class, 'doedit']);
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+        // 角色管理路由
+        Route::resource('/role', App\Http\Controllers\Admin\RoleController::class);
+
+        // 权限管理路由
+        Route::resource('/permission', App\Http\Controllers\Admin\PermissionController::class);
+    });
 });
