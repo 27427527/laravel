@@ -16,15 +16,17 @@
                 <div class="layui-col-md12">
                     <div class="layui-card">
                         <div class="layui-card-body ">
-                            <form class="layui-form layui-col-space5">
+                            <form class="layui-form layui-col-space5" action="{{ url('admin/user') }}" method="get">
+
+    
                                 <div class="layui-inline layui-show-xs-block">
-                                    <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
+                                    <input class="layui-input laydate-input"  value="{{ request('start', '') }}"  autocomplete="off"  placeholder="开始日" name="start" id="start">
                                 </div>
                                 <div class="layui-inline layui-show-xs-block">
-                                    <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
+                                    <input class="layui-input laydate-input"  value="{{ request('end', '') }}"  autocomplete="off"  placeholder="截止日" name="end" id="end">
                                 </div>
                                 <div class="layui-inline layui-show-xs-block">
-                                    <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                    <input type="text" name="keyword" value="{{ request('keyword', '') }}"  placeholder="请输入" autocomplete="off" class="layui-input">
                                 </div>
                                 <div class="layui-inline layui-show-xs-block">
                                     <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
@@ -52,7 +54,7 @@
                                   <th>操作</th>
                               </thead>
                               <tbody>
-                                @foreach ($user as $v)
+                                @foreach ($users as $v)
                                     
                        
                                 <tr>
@@ -102,16 +104,16 @@
                             </table>
                         </div>
                         <div class="layui-card-body ">
-                            <div class="page">
-                                <div>
-                                  <a class="prev" href="">&lt;&lt;</a>
-                                  <a class="num" href="">1</a>
-                                  <span class="current">2</span>
-                                  <a class="num" href="">3</a>
-                                  <a class="num" href="">489</a>
-                                  <a class="next" href="">&gt;&gt;</a>
-                                </div>
-                            </div>
+
+                          <div class="pagination">
+    {{ $users->links() }}
+</div>
+
+
+
+    </div>
+</div>
+                        
                         </div>
                     </div>
                 </div>
@@ -123,16 +125,17 @@
         var laydate = layui.laydate;
         var form = layui.form;
         
-        //执行一个laydate实例
-        laydate.render({
-          elem: '#start' //指定元素
-        });
+ 
 
-        //执行一个laydate实例
-        laydate.render({
-          elem: '#end' //指定元素
-        });
-      });
+           $('.laydate-input').each(function(){
+              laydate.render({
+              elem: this
+              ,position: 'fixed'
+              ,type: 'datetime'
+              });
+            });
+
+   });
 
        /*用户-停用*/
 

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\admin\Permission;
-use App\Models\admin\Role;
+use App\Models\admin\PermissionCate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class RoleController extends Controller
+class PermissionCateController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,50 +17,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $cate_list = PermissionCate::all();
 
-        return view('admin.role.list', ['roles' => $roles]);
-    }
-
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function auth($id)
-    {
-        $role = Role::find($id);
-
-        $role_permissions = $role->permissions->pluck('permission_id')->toArray();
-
-        // dd($role_permissions);
-
-        $permission_list = Permission::all()->groupBy('module');
-
-        return view('admin.role.auth', ['role' => $role, 'permission_list' => $permission_list, 'role_permissions' => $role_permissions]);
-    }
-
-    /**
-     * 更新角色权限
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function doauth(Request $request, $id)
-    {
-        $input = $request->all();
-
-        $role = Role::find($id);
-
-        $role_list = $request->input('id', []);
-        if (! empty($role_list)) {
-            $role->permissions()->sync($role_list);
-        } else {
-            $role->permissions()->detach();
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => '分配权限成功',
-        ], 200);
+        return view('admin.permission.cate', ['cate_list' => $cate_list]);
     }
 
     /**
@@ -70,9 +29,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        // dd('create');
-
-        return view('admin.role.add');
+        //
     }
 
     /**
@@ -83,7 +40,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:16|unique:roles',
+            'cate_name' => 'required|string|max:16|unique:permission_cate',
 
         ]);
 
@@ -96,10 +53,8 @@ class RoleController extends Controller
 
         $input = $request->all();
 
-        $role = Role::create([
-            'name' => $input['name'],
-            'slug' => $input['slug'],
-            'description' => $input['description'],
+        $role = PermissionCate::create([
+            'cate_name' => $input['cate_name'],
         ]);
 
         if ($role) {
@@ -134,9 +89,9 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $role = Role::find($id);
+        $cate = PermissionCate::find($id);
 
-        return view('admin.role.edit', ['role' => $role]);
+        return view('admin.permission.editcate', ['cate' => $cate]);
     }
 
     /**
@@ -148,7 +103,7 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:16',
+            'cate_name' => 'required|string|max:16|unique:permission_cate,cate_name,'.$id.',permission_cate_id',
 
         ]);
 
@@ -160,22 +115,20 @@ class RoleController extends Controller
         }
 
         $input = $request->all();
-
-        $role = Role::find($id);
-        $role->name = $input['name'];
-        $role->slug = $input['slug'];
-        $role->description = $input['description'];
-        $role->save();
+        $role = PermissionCate::find($id);
+        $role->update([
+            'cate_name' => $input['cate_name'],
+        ]);
 
         if ($role) {
             return response()->json([
                 'success' => true,
-                'message' => '修改成功',
+                'message' => '添加成功',
             ], 200);
         } else {
             return response()->json([
                 'success' => false,
-                'message' => '修改失败',
+                'message' => '添加失败',
             ], 200);
         }
     }
@@ -188,6 +141,22 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // DB::enableQueryLog();
+        $rs = PermissionCate::destroy($id);
+
+        // $sql = DB::getQueryLog();
+        // dd($sql);
+
+        if ($rs) {
+            return response()->json([
+                'success' => true,
+                'message' => '删除成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '删除失败',
+            ], 200);
+        }
     }
 }

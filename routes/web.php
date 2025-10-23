@@ -42,14 +42,19 @@ Route::prefix('admin')->group(function () {
 
         // 用户管理路由
 
-        Route::resource('/user', App\Http\Controllers\Admin\UserController::class);
+        Route::resource('/user', App\Http\Controllers\Admin\UserController::class)->middleware('role:max');
         Route::put('/user/status/{id}', [App\Http\Controllers\Admin\UserController::class, 'status']);
         Route::put('/info', [App\Http\Controllers\Admin\UserController::class, 'doedit']);
 
         // 角色管理路由
-        Route::resource('/role', App\Http\Controllers\Admin\RoleController::class);
+        Route::resource('/role', App\Http\Controllers\Admin\RoleController::class)->middleware('permission:role.index');
+        Route::get('/role/auth/{id}', [App\Http\Controllers\Admin\RoleController::class, 'auth']);
+        Route::put('/role/auth/{id}', [App\Http\Controllers\Admin\RoleController::class, 'doauth']);
 
         // 权限管理路由
-        Route::resource('/permission', App\Http\Controllers\Admin\PermissionController::class);
+        Route::resource('/permission', App\Http\Controllers\Admin\PermissionController::class)->middleware('permission:permission.index');
+        Route::resource('/permissioncate', App\Http\Controllers\Admin\PermissionCateController::class)->except([
+            'show', 'create',
+        ])->middleware('permission:permission.cate');
     });
 });

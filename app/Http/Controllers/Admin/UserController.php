@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\admin\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -15,11 +16,34 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = Admin::all();
+        // DB::enableQueryLog();
+        $input = $request->all();
+        $users = Admin::orderBy('id', 'asc')
+        ->where(function ($query) use ($request) {
+            // 按关键字搜索
+            if ($request->has('keyword') && ! empty($request->input('keyword'))) {
+                $keyword = $request->input('keyword');
+                $query->where('username', 'like', '%'.$keyword.'%')
+                      ->orWhere('phone', 'like', "%{$keyword}%")
+                      ->orWhere('real_name', 'like', "%{$keyword}%");
+            }
+        })
+        ->where(function ($query) use ($request) {
+            // 按起始日期搜索
+            if ($request->has('start') && ! empty($request->input('start'))) {
+                $query->where('created_at', '>=', $request->input('start'));
+            }
 
-        return view('admin.user.list', compact('user'));
+            // 按截止日期搜索
+            if ($request->has('end') && ! empty($request->input('end'))) {
+                $query->where('created_at', '<=', $request->input('end'));
+            }
+        })
+        ->paginate(2)->withQueryString();
+
+        return view('admin.user.list', ['users' => $users]);
     }
 
     /**
@@ -29,7 +53,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.user.add');
+        $role_list = Role::all();
+
+        return view('admin.user.add', ['role_list' => $role_list]);
     }
 
     /**
@@ -66,6 +92,12 @@ class UserController extends Controller
         ]);
 
         if ($user) {
+            // 给用户授予权限角色
+            $role_list = $request->input('id', []);
+            if (! empty($role_list)) {
+                $user->roles()->attach($role_list);
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => '用户添加成功',
@@ -133,9 +165,13 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        $role_list = Role::all();
+
         $user = Admin::find($id);
 
-        return view('admin.user.edit', compact('user'));
+        $user_roles = $user->roles->pluck('role_id')->toArray();
+
+        return view('admin.user.edit', compact('user', 'role_list', 'user_roles'));
     }
 
     /**
@@ -159,6 +195,13 @@ class UserController extends Controller
         $rs = $user->update($input);
 
         if ($rs) {
+            $role_list = $request->input('id', []);
+            if (! empty($role_list)) {
+                $user->roles()->sync($role_list);
+            } else {
+                $user->roles()->detach();
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => '用户修改成功',

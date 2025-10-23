@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\admin\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,14 +32,19 @@ class Admin extends Authenticatable
         'password', 'remember_token',
     ];
 
-    protected $casts = [
-        'permissions' => 'array',
-
-    ];
+    /**
+     * 获取用户的所有权限
+     */
+    public function getAllPermissions()
+    {
+        return $this->roles->flatMap(function ($role) {
+            return $role->permissions->pluck('slug');
+        })->unique()->values();
+    }
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'role_user');
+        return $this->belongsToMany(Role::class, 'role_admin', 'id', 'role_id');
     }
 
     /**

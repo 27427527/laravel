@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,5 +27,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // 设置默认字符串长度
         Schema::defaultStringLength(191);
+
+        // 使用 Bootstrap 4 分页样式
+
+        Paginator::defaultView('layouts.page');
     }
 }

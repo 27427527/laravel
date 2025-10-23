@@ -9,7 +9,7 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        if (! $request->user() || ! $request->user()->hasRole($role)) {
+        if (! $request->user('admin') || ! $request->user('admin')->hasRole($role)) {
             abort(403, '无权访问');
         }
 

@@ -9,7 +9,7 @@ class CheckPermission
 {
     public function handle(Request $request, Closure $next, $permission)
     {
-        if (! $request->user() || ! $request->user()->hasPermission($permission)) {
+        if (! $request->user('admin') || ! $request->user('admin')->hasPermission($permission)) {
             abort(403, '无权访问');
         }
 

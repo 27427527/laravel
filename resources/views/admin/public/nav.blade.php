@@ -94,17 +94,17 @@
                                     <cite>管理员列表</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('角色管理','admin-role.html')">
+                                <a onclick="xadmin.add_tab('角色管理','{{ url('admin/role') }}')">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>角色管理</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('权限分类','admin-cate.html')">
+                                <a onclick="xadmin.add_tab('权限分类','{{ url('admin/permissioncate') }}')">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>权限分类</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('权限管理','admin-rule.html')">
+                                <a onclick="xadmin.add_tab('权限管理','{{ url('admin/permission') }}')">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>权限管理</cite></a>
                             </li>
