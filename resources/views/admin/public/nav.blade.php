@@ -62,11 +62,18 @@
                             <cite>分类管理</cite>
                             <i class="iconfont nav_right">&#xe697;</i></a>
                         <ul class="sub-menu">
-                            <li>
-                                <a onclick="xadmin.add_tab('多级分类','cate.html')">
+                           
+                                @foreach ( $cate_list as $v )
+     <li>
+
+
+                                <a onclick="xadmin.add_tab('{{$v['name']}}','{{ url('admin/cate/'.$v['cate_id']) }}')">
                                     <i class="iconfont">&#xe6a7;</i>
-                                    <cite>多级分类</cite></a>
-                            </li>
+                                    <cite>{{$v['name']}}</cite></a>
+                                      </li>
+                                @endforeach
+
+                          
                         </ul>
                     </li>
                     <li>

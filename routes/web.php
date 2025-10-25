@@ -32,6 +32,9 @@ Route::prefix('admin')->group(function () {
         // 退出登录路由
         Route::get('/logout', [LoginController::class, 'logout']);
 
+        // 后台文件上传
+        Route::post('/upfile', [AdminViewController::class, 'upfile']);
+
         // 后台页面路由
 
         Route::controller(AdminViewController::class)->group(function () {
@@ -45,6 +48,11 @@ Route::prefix('admin')->group(function () {
         Route::resource('/user', App\Http\Controllers\Admin\UserController::class)->middleware('role:max');
         Route::put('/user/status/{id}', [App\Http\Controllers\Admin\UserController::class, 'status']);
         Route::put('/info', [App\Http\Controllers\Admin\UserController::class, 'doedit']);
+
+        // 分类管理路由
+        Route::resource('/cate', App\Http\Controllers\Admin\CateController::class);
+        Route::put('/cate/status/{id}', [App\Http\Controllers\Admin\CateController::class, 'status']);
+        Route::put('/cate/order/{id}', [App\Http\Controllers\Admin\CateController::class, 'order']);
 
         // 角色管理路由
         Route::resource('/role', App\Http\Controllers\Admin\RoleController::class)->middleware('permission:role.index');
