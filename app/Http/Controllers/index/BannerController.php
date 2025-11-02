@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Http\Controllers\index;
+
+use App\Http\Controllers\Controller;
+use App\Models\admin\Cate;
+use App\Models\index\Banner;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+
+class BannerController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $cate_id = $request->cate_id;
+        $cate = Cate::find($cate_id);
+        $banner_list = $cate->banners;
+        $nav_list = $cate->getAncestors();
+
+        return view('admin.banner.index', ['cate' => $cate, 'banner_list' => $banner_list, 'nav_list' => $nav_list]);
+    }
+
+     /**
+      * Show the form for creating a new resource.
+      *
+      * @return \Illuminate\Http\Response
+      */
+     public function show(Request $request)
+     {
+         $cate_id = $request->cate_id;
+         $cate = Cate::find($cate_id);
+         $banner_list = $cate->banners;
+
+         return response()->json([
+             'message' => 'success',
+             'banner_list' => $banner_list,
+             'state' => 200,
+         ]);
+     }
+
+    public function create(Request $request)
+    {
+        $cate_id = $request->cate_id;
+
+        return view('admin.banner.add', ['cate_id' => $cate_id]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+            'image' => 'required|string|max:100',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 200);
+        }
+
+        $input = $request->except('_token');
+
+        $cate = Banner::create($input);
+
+        if ($cate) {
+            return response()->json([
+                'success' => true,
+                'message' => '添加成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '添加失败',
+            ], 200);
+        }
+    }
+
+    /**
+     * 显示编辑分类表单
+     */
+    public function edit($id)
+    {
+        $banner = Banner::find($id);
+
+        return view('admin.banner.edit', compact('banner'));
+    }
+
+    /**
+     * 更新分类
+     */
+    public function update(Request $request, $id)
+    {
+        $banner = Banner::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'image' => 'string',
+        ]);
+        $input = $request->except('_token');
+
+        // 处理图片上传
+
+        $old_img = $banner->image;
+
+        $banner->update($input);
+
+        if ($banner) {
+            // 上传了新图片
+            if ($input['image'] && ($input['image'] != $old_img) && $old_img) {
+                // 删除旧图片
+
+                Storage::disk('public')->delete($old_img);
+            }
+
+            // 没有上传图片
+            if (empty($input['image']) && $old_img) {
+                // 删除旧图片
+
+                Storage::disk('public')->delete($old_img);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => '添加成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '添加失败',
+            ], 200);
+        }
+    }
+
+    /**
+     * 删除
+     */
+    public function destroy($id)
+    {
+        $banner = Banner::find($id);
+
+        // 删除图片
+        if ($banner->image) {
+            Storage::disk('public')->delete($banner->image);
+        }
+
+        $rs = $banner->delete();
+
+        if ($rs) {
+            return response()->json([
+                'success' => true,
+                'message' => '删除成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '删除失败',
+            ], 200);
+        }
+    }
+}

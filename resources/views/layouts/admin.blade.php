@@ -68,7 +68,9 @@
                 </div>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
-                        <iframe src='{{ url('admin/welcom') }}' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+
+                        @yield('content11')
+                        
                     </div>
                 </div>
                 <div id="tab_show"></div>

@@ -4,7 +4,8 @@
         <div class="layui-row">
             <form action="" id="role_form" method="post" class="layui-form layui-form-pane" >
              
-     <div class="layui-form-item">
+               <input type="hidden" name="cate_id" value="{{ $banner['cate_id'] }}"  >
+               <div class="layui-form-item">
 
                 
 
@@ -14,74 +15,54 @@
                     <tbody>
                         
                     <tr class="row">
-                    <td>分类名称<span class="x-red">*</span></td>
+                    <td>名称<span class="x-red">*</span></td>
                     <td>
-                        <input type="text" id="name" name="name" value="{{ $cate['name'] }}" required=""  lay-verify="required"
+                        <input type="text" id="name" name="name" value="{{ $banner['name'] }}"    lay-verify="required"
                         autocomplete="off" class="layui-input">
                     </td>
                     </tr>  
 
-                    <tr class="row">
-                    <td>自定义链接</td>
+                     <tr class="row">
+                    <td> 标题</td>
                     <td>
-                        <input type="text" id="slug" name="slug" value="{{ $cate['slug'] }}" 
-                        autocomplete="off" class="layui-input">
-                    </td>
-                    </tr>  
-
-                    <tr class="row">
-                    <td>关联表</td>
-                    <td>
-                        <input type="text" id="relation" name="relation" value="{{ $cate['relation'] }}" 
+                        <input type="text" id="title" name="title"  value="{{ $banner['title'] }}"
                         autocomplete="off" class="layui-input">
                     </td>
                     </tr> 
 
+
                     <tr class="row">
-                    <td>备注</td>
+                    <td>自定义链接</td>
                     <td>
-                        <input type="text" id="description" name="description" value="{{ $cate['description'] }}" 
+                        <input type="text" id="slug" name="slug"  value="{{ $banner['slug'] }}"
                         autocomplete="off" class="layui-input">
                     </td>
                     </tr>  
 
-                    <tr class="row">
-                    <td> 页面标题</td>
-                    <td>
-                        <input type="text" id="meta_title" name="meta_title" value="{{ $cate['meta_title'] }}" required="" 
-                        autocomplete="off" class="layui-input">
-                    </td>
-                    </tr>  
-                    <tr class="row">
-                    <td>页面说明</td>
-                    <td>
-                        <input type="text" id="meta_description" name="meta_description" value="{{ $cate['meta_description'] }}"
-                        autocomplete="off" class="layui-input">
-                    </td>
-                    </tr>  
+                   
 
 
                     <tr class="row">
 
-                    <td>分类图片</td>
+                    <td>图片</td>
 
                     <td>
                     
 
 
-                            	<button  type="button" class="layui-btn lay_up" data-id="{{ $cate['cate_id'] }}">
+                            	<button  type="button" class="layui-btn lay_up" data-id="{{ $banner->banner_id }}">
 		  <i class="layui-icon">&#xe67c;</i>上传图片
 		</button>
     
-         <input type="hidden" name="image" id="{{ $cate['cate_id'] }}_input"   value="{{ $cate['image'] }}">
+         <input type="hidden" name="image" value="{{ $banner->image }}" id="{{ $banner->banner_id }}_input"  >
 
 
-			<a id="{{ $cate['cate_id'] }}_a" href="{{ $cate['image'] ? '/storage/'.$cate['image'] :''}}" target="_blank">
+			<a id="{{ $banner->banner_id }}_a" href="{{ $banner['image'] ? '/storage/'.$banner['image'] :''}}" target="_blank">
         
-        <img id="{{ $cate['cate_id'] }}_pic" src="{{ $cate['image'] ? '/storage/'.$cate['image'] :'/images/point.png'}}"  height="38"/>
+        <img id="{{ $banner->banner_id }}_pic" src="{{ $banner['image'] ? '/storage/'.$banner['image'] :'/images/point.png'}}"  height="38"/>
       </a>
 			
-			<a data-id="{{ $cate['cate_id'] }}" href="javascript:;" onclick="if(confirm('确定删除吗!')){delete_img({{ $cate['cate_id'] }})}" class="delete">删除</a>
+			<a data-id="{{ $banner->banner_id }}" href="javascript:;" onclick="if(confirm('确定删除吗!')){delete_img({{ $banner->banner_id }})}" class="delete">删除</a>
                         
                      
                     </td>
@@ -167,7 +148,7 @@
             //发异步，把数据提交给php
             
               $.ajax({
-               url : "/admin/cate/{{ $cate['cate_id'] }}",  
+                url : "/admin/banner/{{ $banner['banner_id'] }}",  
                type : "PUT", 
                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},   
                data : $('#role_form').serialize(),  

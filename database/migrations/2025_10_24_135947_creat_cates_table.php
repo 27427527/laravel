@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->nullable();
             $table->string('level')->default('1');
+            $table->string('table')->nullable();
             $table->text('description')->nullable();
             $table->unsignedBigInteger('parent_id')->default(0);
             $table->integer('order')->default(1);

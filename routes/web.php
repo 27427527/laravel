@@ -43,6 +43,9 @@ Route::prefix('admin')->group(function () {
             Route::get('/welcom', 'welcom');
         });
 
+        // 轮播图
+        Route::resource('/banner', App\Http\Controllers\index\BannerController::class)->middleware('permission:banner.index');
+
         // 用户管理路由
 
         Route::resource('/user', App\Http\Controllers\Admin\UserController::class)->middleware('role:max');

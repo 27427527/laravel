@@ -56,6 +56,53 @@
                             </li>
                         </ul>
                     </li>
+
+     @foreach ( $cate_list as $v )
+                <li>
+                        <a href="javascript:;">
+                            <i class="iconfont left-nav-li" lay-tips="{{$v['name']}}">&#xe723;</i>
+                            <cite>{{$v['name']}}</cite>
+                            <i class="iconfont nav_right">&#xe697;</i></a>
+
+
+                            @php
+                       
+                            $cur_cate = App\Models\admin\Cate::find($v['cate_id']);
+                            $list2 = $cur_cate->getAllDescendants();
+                            $original = "&nbsp;";
+                              
+                               
+                            @endphp
+                        <ul class="sub-menu">
+                           
+                                @foreach ( $list2 as $v2 )
+
+   <li>
+
+
+ 
+
+
+                                <a onclick="xadmin.add_tab('{{ $v2->name }}','{{ url('admin/'.$v->relation.'?cate_id='. $v2->cate_id) }}')">
+
+                                
+ @php
+  $copy = str_repeat($original, $v2['level']-1);
+                                echo $copy;
+ @endphp
+
+                                    <i class="iconfont">&#xe6a7;</i>
+                                    <cite>{{ $v2->name }}</cite></a>
+                                      </li>
+                                @endforeach
+
+                          
+                        </ul>
+                    </li>
+
+
+        @endforeach
+
                     <li>
                         <a href="javascript:;">
                             <i class="iconfont left-nav-li" lay-tips="分类管理">&#xe723;</i>
@@ -76,6 +123,10 @@
                           
                         </ul>
                     </li>
+
+
+
+
                     <li>
                         <a href="javascript:;">
                             <i class="iconfont left-nav-li" lay-tips="城市联动">&#xe723;</i>

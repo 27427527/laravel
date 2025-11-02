@@ -162,6 +162,13 @@ class CateController extends Controller
             ], 200);
         }
 
+        if ($cate->hasbanners()) {
+            return response()->json([
+                'success' => false,
+                'message' => '请先删除子分类下的banner图',
+            ], 200);
+        }
+
         // 删除图片
         if ($cate->image) {
             Storage::disk('public')->delete($cate->image);

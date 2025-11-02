@@ -2,6 +2,7 @@
 
 namespace App\Models\admin;
 
+use App\Models\index\Banner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ class Cate extends Model
         'name',
         'slug',
         'level',
+        'relation',
         'description',
         'parent_id',
         'order',
@@ -33,6 +35,22 @@ class Cate extends Model
     protected $casts = [
         'order' => 'integer',
     ];
+
+    /**
+     * 子分类
+     */
+    public function banners(): HasMany
+    {
+        return $this->hasMany(Banner::class, 'cate_id');
+    }
+
+    /**
+     * 检查是否有子分类
+     */
+    public function hasbanners(): bool
+    {
+        return $this->banners()->exists();
+    }
 
     /**
      * 父分类

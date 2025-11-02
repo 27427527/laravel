@@ -5,7 +5,7 @@
                 <a><cite>首页</cite></a>
                 <a><cite>分类管理</cite></a>
                 <a>
-                    {{ $cate['name']}}</a>
+                       {{ $cate['name']}}</a>
 
 
                    
@@ -83,7 +83,9 @@
 
                                 
                                 @php
-                             
+
+                            
+
                                   $original = "&nbsp;&nbsp;&nbsp;&nbsp;";
                                 $copy = str_repeat($original, $v['level']);
                                 echo $copy;
