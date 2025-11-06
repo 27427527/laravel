@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./lib/layui/css/layui.css">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./lib/layui/layui.js"></script>
+    <style>
+       
+    </style>
+</head>
+ 
+<body>
+
+
+
+
+
+
+    <form class="layui-form" action="add" id="myForm" method="post" style="">
+         <div class="layui-form-item" id="free"> 
+ 
+    <div id="sku-container" class="layui-input-inline multiple_specif mar-top-10" style="width:calc(100% - 120px);">
+        <!--颜色-->
+        <div class="layui-form-item attr-key-item" style="display: flex;display: flex;flex-wrap: wrap;">
+            <div>
+                <div class="sku-title">颜色：</div>
+                <div class="sku-title" style="margin-top:26px;">图片：</div>
+                <input type="hidden" value="颜色" class="layui-input attr-key">
+            </div>
+            <div class="attr-vals">
+                <div class="layui-inline" style="float:left;">
+                    <div class="layui-input-inline w-130"> <input type="text" placeholder="请输入颜色" lay-verify="required"
+                            class="attr-val layui-input input-sm color-val"></div>
+                    <div class="layui-form-mid layui-word-aux"> <a class="btn-remove-attr-val"
+                            href="javascript:void(0);">删除</a> </div>
+                    <div class="hand img_item_wrap" id="uploadColor" style="margin-top: 50px;"> 
+                        <div class="course-map hand ov-hidden"  style="width:80px;height:80px;">
+                        <img class="layui-upload-img yuimg"
+                                src="http://img.hotniu.cn/user/img/20210721/16268359965384.jpg" alt="" width="100%">
+                        </div>
+                    </div><input class="layui-upload-file" type="file" accept="undefined" name="file">
+                </div>
+                
+            </div>
+            <div class="layui-inline">
+                <div class="layui-form-mid layui-word-aux" style="padding:10px 0!important;"><a
+                        class="btn-add-attr-val add-a" href="javascript:void(0);">添加</a></div>
+            </div>
+        </div>
+        <!--尺码-->
+        <div class="layui-form-item attr-key-item" style="display: flex;display: flex;flex-wrap: wrap;margin-top: 12px;">
+            <div class="sku-title1">尺码：</div>
+            <input type="hidden" value="尺码" class="layui-input attr-key">
+            <div class="attr-vals size_value">
+                <div class="layui-inline">
+                    <div class="layui-input-inline w-130">
+                        <input type="text" placeholder="请输入尺码" class="attr-val layui-input input-sm size-val">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        <a class="btn-remove-attr-val1"    href="javascript:void(0);">删除</a>
+                    </div>
+                </div>                
+            </div>
+            <div class="layui-inline">
+                <div class="layui-form-mid layui-word-aux" style="padding:10px 0!important;">
+                    <a class="add-size add-a" href="javascript:void(0);">添加</a>
+                </div>
+            </div>
+        </div>
+        <!--放多规格-->
+        <div id="sku-container"></div>
+        <!--多规格表格-->
+        <div class="layui-form-item" id="sku-table" style="max-width:800px;"></div>
+    </div>
+</div>
+    </form>
+ 
+    <script type="text/javascript">
+        // layui 公共配置
+        const layconfig = {
+            base: 'layui/js/',
+            version: true,
+            debug: true,
+        };
+    </script>
+    <script type="text/javascript">
+        const init = function (options) {
+            var _modules = options.modules || [];
+            _modules = _modules.concat('layer', 'form', 'element');
+ 
+            layui.config(layconfig).use(_modules, function (opt) {
+ 
+                var form = layui.form,
+                    laytpl = layui.laytpl,
+                    element = layui.element;
+ 
+                // 其他事件
+                if (options.exec) {
+                    options.exec(layui);
+                }
+ 
+                form.render();
+            });
+        };
+    </script>
+  
+    <script type="text/javascript">
+     var opt = {
+        modules: ['table', 'form', 'element', 'laytpl', 'tree',"upload"],
+        exec: function(layui) {
+            // --------------------- 商品规格开始 ------------------------------------    
+            
+             //layui图片上传功能自己完善，在这里不赘述了
+             var uploadInst = layui.upload.render({
+                elem: '#uploadColor',
+                url: '/upload/',//接口地址
+                size: 500,
+                before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function (index, file, result) {
+                        $('#demo1').attr('src', result); //图片链接（base64）
+                    });
+                }
+                , done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        return layer.msg('上传失败');
+                    }
+                    //上传成功
+                    //打印后台传回的地址: 把地址放入一个隐藏的input中, 和表单一起提交到后台, 此处略..
+                      console.log(res.data.src);
+                  
+                }
+                , error: function () {
+                   
+                }
+            });
+
+
+
+
+            
+            // 单击颜色添加 attr val
+            var attr_val_sort = 0;
+            $(document).on("click", ".btn-add-attr-val", function () {    
+                attr_val_sort++;
+                //图片
+                let imgId = "#uploadColor" + attr_val_sort;                    
+                let html =
+                    ["<div class=\"layui-inline attr-vals-item\">",
+                        "<div class=\"layui-input-inline w-130\">",
+                        "<input type=\"text\" placeholder=\"请输入颜色\" lay-verify=\"required\" class=\"attr-val layui-input input-sm color-val\">",                                
+                        "</div>",
+                        "<div class=\"layui-form-mid layui-word-aux\">",
+                        "<a class=\"btn-remove-attr-val\" href=\"javascript:void(0);\">删除</a>",
+                        "</div>",
+                        "<div class=\"hand mar-top-50 img_item_wrap\" id=\"uploadColor" + attr_val_sort + "\" style=\"margin-top: 55px;width:80px;height:80px;\">",
+                        "<img src=\"http://img.hotniu.cn/user/img/20210721/16268359965384.jpg\" alt=\"\" width=\"100%\"></div>",                                
+                        "</div>"].join("");
+                    $(this).parent().parent().parent().find(".attr-vals").append(html); // 添加到该按钮的前面
+               
+              
+            });
+            // 单击尺码添加 attr val
+            $(document).on("click", ".add-size", function () {    
+                attr_val_sort++;                        
+                let html =
+                    ["<div class=\"layui-inline attr-vals-item\">",
+                    "<div class=\"layui-input-inline w-130\">",
+                        "<input type=\"text\" placeholder=\"请输入尺码\" lay-verify=\"required\" class=\"attr-val layui-input input-sm size-val\"></div>",
+                        "<div class=\"layui-form-mid layui-word-aux\">",
+                        "<a class=\"btn-remove-attr-val\" href=\"javascript:void(0);\">删除</a></div>",
+                        "</div>"].join("");
+                $("#size_wrap").append(html);
+                $(this).parent().parent().parent().find(".attr-vals").append(html); // 添加到该按钮的前面                      
+            });
+            // 监听attr val 输入
+            $(document).on("change", ".attr-val", function() {                    
+                var current_val = $(this).val();                
+                initSkuTable();
+            });
+ 
+            // 监听attr_val 输入
+            layui.form.on('checkbox(attr-val)', function(data) {
+                initSkuTable();
+            });
+ 
+            // 绘制表格
+            function initSkuTable(index) {                
+                var numval = [];    //数量
+                var itemNoval = [];//货号
+                $(".goodNum").each(function() {                    
+                    numval.push($(this).val());    
+                })
+                $(".itemNo").each(function() {
+                    itemNoval.push($(this).val());    
+                })
+                if(index != undefined){
+                    numval.splice(index ,1)    
+                    itemNoval.splice(index ,1)
+                }
+                var attrs = []; // 存放属性数组
+                var total_row = 1; // 总行数
+                var sku_table_dom = ""; // sku表格dom 
+                // 获取元素类型
+                $(".attr-key-item").each(function(index, item) {
+                    var attr_key = {};
+                    attr_key.attr_key = $(item).find(".attr-key").val();
+                    var attr_vals = [];
+                    $(item).find('.attr-val').each(function(index, item) {
+                        var val = $(item).val();
+                        if (val == undefined || val == "") {
+                            return;
+                        }
+                        var attr_val = {}; // attr val对象                    
+                        attr_val.attr_val = val;
+                        attr_vals.push(attr_val);
+                    });
+                    if (attr_vals && attr_vals.length > 0) {
+                        total_row = total_row * attr_vals.length;
+                        attr_key.attr_vals = attr_vals; // sku值数组
+                        attrs.push(attr_key); // 保存进数组中
+                    }
+                });
+
+                console.log(attrs);
+                if(attrs.length >= 2){
+                    sku_table_dom = "<table class='layui-table skuTable'><thead><tr>";
+                    // 创建表头
+                    for (var i = 0; i < attrs.length; i++) {
+                        for (var i = 0; i < attrs.length; i++) {
+                            sku_table_dom += '<th>' + attrs[i].attr_key + '</th>';
+                        }
+                    }
+                    sku_table_dom += '<th>单价</th><th>可售数量<input type="checkbox" lay-filter="checkNum" name="" title="" lay-skin="primary" style="margin-bottom: 10px;"></br>全部相同</th>';
+                    sku_table_dom += '<th>货号<input type="checkbox" lay-filter="checkiItemNo" name="" title="" lay-skin="primary"></br>全部相同</th>';
+                    
+                    sku_table_dom += "</thead></tr>";
+                    // 循环处理表体
+                    for (var i = 0; i < total_row; i++) { //总共需要创建多少行
+                        var curr_row_doms = "";
+                        var row_count = 1; // 记录行数
+                        
+                        var attr_key_arr = []; // 记录 attr key
+                        var attr_val_arr = []; // 记录 attr val
+                    
+                        for (var j = 0; j < attrs.length; j++) {
+                            var attr_vals = attrs[j].attr_vals; // attr val 数组
+                            // console.log(attr_vals)
+                            var attr_vals_len = attr_vals.length; // attr val 长度
+                            row_count = (row_count * attr_vals_len); // 目前的生成的总行数
+                            var an_inter_bank_num = (total_row / row_count); // 跨行数
+                            var point = ((i / an_inter_bank_num) % attr_vals_len);
+                            attr_key_arr.push(attrs[j].attr_key);
+                            if (0 == (i % an_inter_bank_num)) {
+                                // 需要创建td
+                                curr_row_doms += '<td rowspan=' + an_inter_bank_num + '>' + attr_vals[point]
+                                    .attr_val + '</td>';
+                                attr_val_arr.push(attr_vals[point].attr_val);                                
+                            } else {
+                                // 当前单元格为跨行
+                                attr_val_arr.push(attr_vals[parseInt(point)].attr_val);                            
+                            }
+                        }
+                        
+                        var price = $.trim($(".retail_price").val()) == "" ? 0 : $(".retail_price").val();
+                        var goods_number = itemNoval[i]; //货号
+                        var goodsNo=""
+                        if(goods_number != undefined){
+                            goodsNo = itemNoval[i] 
+                        }else{
+                            goodsNo = ""
+                        }
+                        sku_table_dom += '<tr class="sku_table_tr">' + curr_row_doms +
+                            '<td><input type="number" autocomplete="off" class="layui-input input-sm price" disabled=\"true\" value="' +
+                            price + '"/></td>' +
+                            '<td><input type="number" autocomplete="off" value="' + numval[i] + '" required lay-verify="required" class="layui-input input-sm goodNum" /></td>' +
+                            '<td><input type="text" value="' + goodsNo + '" οnkeyup="onlyNonNegativeitemNO(this)" lay-verify="required"  class="layui-input input-sm itemNo" /></td>' +
+                            '</tr>';
+                    }
+                    $("#sku-table").html(sku_table_dom);                
+                    layui.form.render("checkbox");
+                }else{                        
+                    $("#sku-table").html('');                    
+                    layui.form.render("checkbox");
+                }
+                
+            }
+            // 颜色删除
+            $(document).on("click", ".btn-remove-attr-val", function() {
+                $('.color-val').length-1
+                var index = $('.btn-remove-attr-val').index($(this)[0])
+            
+                $(this).parent().parent().remove(); // 添加到该按钮的前面
+                initSkuTable(index)
+            });
+            // 尺码删除
+            $(document).on("click", ".btn-remove-attr-val1", function() {
+                $('.size-val').length-1
+                var index = $('.btn-remove-attr-val1').index($(this)[0])
+                $(this).parent().parent().remove(); // 添加到该按钮的前面
+                initSkuTable(index)
+            });
+            //提交最终数据做了封装(根据自身需求)
+            let attribute_option_1 = {
+                "label": [],
+                "image": []
+            };//颜色
+            let label = [];
+            let image = [];
+            let bind_option_1 = [];//颜色
+            let bind_option_2 = [];//尺码
+            $(".color-val").each(function () {
+                let _this = $(this);                                
+                label.push($(this).val());
+                $(".size-val").each(function () {
+                    bind_option_1.push(_this.val());                    
+                    bind_option_2.push($(this).val());
+                });
+            });
+            //图片
+            $(".img_item_wrap img").each(function () {
+                let imgSrc = $(this).attr("src");
+                if (imgSrc == "images/icon_add.jpg") {
+                    layer.msg("请上传图片", {
+                        icon: 2, time: 1500
+                    });
+                    return false;
+                } else {
+                    image.push(imgSrc);
+                }
+            });
+            // --------------------- 商品规格end ------------------------------------    
+        }
+    };
+    init(opt);
+ 
+ 
+</script>

@@ -69,7 +69,7 @@ class CateController extends Controller
 
         $input = $request->except('_token');
 
-        if ($input['parent_id']) {
+        if (! empty($input['parent_id'])) {
             $parent = Cate::find($input['parent_id']);
 
             $input['level'] = $parent->level + 1;
@@ -165,7 +165,21 @@ class CateController extends Controller
         if ($cate->hasbanners()) {
             return response()->json([
                 'success' => false,
-                'message' => '请先删除子分类下的banner图',
+                'message' => '请先删除分类下的banner图',
+            ], 200);
+        }
+
+        if ($cate->hasbrands()) {
+            return response()->json([
+                'success' => false,
+                'message' => '请先删除分类下的品牌',
+            ], 200);
+        }
+
+        if ($cate->hasgoods()) {
+            return response()->json([
+                'success' => false,
+                'message' => '请先删除分类下的商品',
             ], 200);
         }
 

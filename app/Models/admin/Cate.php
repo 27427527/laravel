@@ -3,9 +3,12 @@
 namespace App\Models\admin;
 
 use App\Models\index\Banner;
+use App\Models\index\Brand;
+use App\Models\index\Good;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cate extends Model
@@ -36,6 +39,11 @@ class Cate extends Model
         'order' => 'integer',
     ];
 
+    public function goods(): BelongsToMany
+    {
+        return $this->belongsToMany(Good::class, 'good_cate', 'cate_id', 'good_id');
+    }
+
     /**
      * 子分类
      */
@@ -50,6 +58,22 @@ class Cate extends Model
     public function hasbanners(): bool
     {
         return $this->banners()->exists();
+    }
+
+    /**
+     * 子分类
+     */
+    public function brands(): HasMany
+    {
+        return $this->hasMany(Brand::class, 'cate_id');
+    }
+
+    /**
+     * 检查是否有子分类
+     */
+    public function hasbrands(): bool
+    {
+        return $this->brands()->exists();
     }
 
     /**

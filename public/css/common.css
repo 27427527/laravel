@@ -1,0 +1,26 @@
+/* 图片上传 */
+.pre-li {
+    width: 90px;
+    height: 90px;
+    position: relative;
+    display: inline;
+    margin-right: 10px;
+}
+
+.pre-li img {
+    width: 90px;
+    height: 90px;
+}
+
+.pre-li .iconfont {
+    width: 40px;
+    height: 40px;
+    color: #fff;
+    position: absolute;
+    top: 0px;
+    right: 25px;
+    font-size: 40px;
+    z-index: 1;
+    display: none;
+    cursor: pointer;
+}

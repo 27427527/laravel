@@ -101,8 +101,10 @@
 
                                 <td><input type="text" class="layui-input x-sort" data-order="{{ $v['order']}}" onchange="cate_order(this,{{ $v['cate_id']}})" name="order" value="{{ $v['order']}}"></td>
                                   <td>
+
                                     <input type="checkbox"  {{ $v['is_active'] == "1" ? "checked ":''}} data-id="{{ $v['cate_id']}}" lay-filter="status" name="switch"   lay-text="开启|停用"   lay-skin="switch">
                                   </td>
+                                  
                                   <td class="td-manage">
                                     <button class="layui-btn layui-btn layui-btn-xs"  onclick="xadmin.open('编辑','{{'/admin/cate/'.$v['cate_id'].'/edit'}}')" ><i class="layui-icon">&#xe642;</i>编辑</button>
                                     <button class="layui-btn layui-btn-warm layui-btn-xs"  onclick="xadmin.open('编辑','{{'/admin/cate/create?parent_id='.$v['cate_id'] }}')" ><i class="layui-icon">&#xe642;</i>添加子栏目</button>

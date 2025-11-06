@@ -35,6 +35,8 @@ Route::prefix('admin')->group(function () {
         // 后台文件上传
         Route::post('/upfile', [AdminViewController::class, 'upfile']);
 
+        Route::post('/delete_img', [AdminViewController::class, 'delete_img']);
+
         // 后台页面路由
 
         Route::controller(AdminViewController::class)->group(function () {
@@ -45,6 +47,29 @@ Route::prefix('admin')->group(function () {
 
         // 轮播图
         Route::resource('/banner', App\Http\Controllers\index\BannerController::class)->middleware('permission:banner.index');
+
+        // 品牌
+        Route::resource('/brand', App\Http\Controllers\index\BrandController::class)->middleware('permission:brand.index');
+
+        // 商品
+        Route::resource('/good', App\Http\Controllers\index\GoodController::class)->middleware('permission:good.index');
+
+        // 商品价格编辑
+        Route::get('/good/eprice/{id}/edit', [App\Http\Controllers\index\GoodController::class, 'eprice'])->middleware('permission:good.index');
+        // 商品属性编辑
+        Route::get('/good/attr/{id}/edit', [App\Http\Controllers\index\GoodController::class, 'attr'])->middleware('permission:good.index');
+        // 推荐位
+        Route::put('/good/featured/{id}', [App\Http\Controllers\index\GoodController::class, 'featured'])->middleware('permission:good.index');
+        // 上架
+        Route::put('/good/active/{id}', [App\Http\Controllers\index\GoodController::class, 'active'])->middleware('permission:good.index');
+        //  排序
+        Route::put('/good/order/{id}', [App\Http\Controllers\index\GoodController::class, 'order'])->middleware('permission:good.index');
+        // 商品属性名
+        Route::resource('/attrname', App\Http\Controllers\index\AttrNameController::class)->middleware('permission:good.index');
+        // 商品属性值
+        Route::resource('/attrval', App\Http\Controllers\index\AttrValController::class)->middleware('permission:good.index');
+        // 商品属性价格
+        Route::resource('/attrprice', App\Http\Controllers\index\AttrPriceController::class)->middleware('permission:good.index');
 
         // 用户管理路由
 

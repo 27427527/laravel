@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\admin\Cate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -21,6 +22,22 @@ class AdminViewController extends Controller
             'cate_list' => $cate_list,
         ]);
     }
+
+// 图片删除
+      public function delete_img(Request $request)
+      {
+          $input = $request->input();
+          if (! empty($input['image'])) {
+              // 删除旧图片
+              Storage::disk('public')->delete($input['image']);
+          }
+
+          return response()->json([
+              'success' => true,
+              'message' => '删除成功',
+
+          ], 200);
+      }
 
        /**
         * 处理文件上传

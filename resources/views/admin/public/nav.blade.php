@@ -69,7 +69,7 @@
                        
                             $cur_cate = App\Models\admin\Cate::find($v['cate_id']);
                             $list2 = $cur_cate->getAllDescendants();
-                            $original = "&nbsp;";
+                            $original = "&nbsp;&nbsp;";
                               
                                
                             @endphp
@@ -129,19 +129,6 @@
 
                     <li>
                         <a href="javascript:;">
-                            <i class="iconfont left-nav-li" lay-tips="城市联动">&#xe723;</i>
-                            <cite>城市联动</cite>
-                            <i class="iconfont nav_right">&#xe697;</i></a>
-                        <ul class="sub-menu">
-                            <li>
-                                <a onclick="xadmin.add_tab('三级地区联动','city.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>三级地区联动</cite></a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript:;">
                             <i class="iconfont left-nav-li" lay-tips="管理员管理">&#xe726;</i>
                             <cite>管理员管理</cite>
                             <i class="iconfont nav_right">&#xe697;</i></a>
@@ -168,54 +155,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="javascript:;">
-                            <i class="iconfont left-nav-li" lay-tips="系统统计">&#xe6ce;</i>
-                            <cite>系统统计</cite>
-                            <i class="iconfont nav_right">&#xe697;</i></a>
-                        <ul class="sub-menu">
-                            <li>
-                                <a onclick="xadmin.add_tab('拆线图','echarts1.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>拆线图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('拆线图','echarts2.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>拆线图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('地图','echarts3.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>地图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('饼图','echarts4.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>饼图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('雷达图','echarts5.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>雷达图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('k线图','echarts6.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>k线图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('热力图','echarts7.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>热力图</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('仪表图','echarts8.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>仪表图</cite></a>
-                            </li>
-                        </ul>
-                    </li>
+                
                     <li>
                         <a href="javascript:;">
                             <i class="iconfont left-nav-li" lay-tips="图标字体">&#xe6b4;</i>
@@ -223,7 +163,7 @@
                             <i class="iconfont nav_right">&#xe697;</i></a>
                         <ul class="sub-menu">
                             <li>
-                                <a onclick="xadmin.add_tab('图标对应字体','unicode.html')">
+                                <a onclick="xadmin.add_tab('图标对应字体','/js/unicode.html')">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>图标对应字体</cite></a>
                             </li>
@@ -246,9 +186,9 @@
                                     <cite>错误页面</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('示例页面','demo.html')">
+                                <a onclick="xadmin.add_tab('商品属性','/good.html')">
                                     <i class="iconfont">&#xe6a7;</i>
-                                    <cite>示例页面</cite></a>
+                                    <cite>商品属性</cite></a>
                             </li>
                             <li>
                                 <a onclick="xadmin.add_tab('更新日志','log.html')">

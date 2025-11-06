@@ -24,5 +24,5 @@
 </footer>
   
                     </body>
-
+ <script src="{{asset('js/common.js')}}" charset="utf-8"></script>
 </html>
