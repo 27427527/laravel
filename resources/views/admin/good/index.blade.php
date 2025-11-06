@@ -46,7 +46,7 @@
                                  
                                   <th width="70">ID</th>
                                   <th>名称</th>
-                                  <th>描叙</th>
+                              
                                   <th>价格</th>
                                   <th>原价</th>
                                   <th>库存</th>
@@ -80,7 +80,7 @@
                                       ID: {{ $v['good_id']}}</p>
                                 </td>
                                   <td>{{ $v['name']}}</td>
-                                  <td>{{ $v['description']}}</td>
+                               
                                   <td>{{ $v['price']}}</td>
                                   <td> {{ $v['original_price']}}</td>
                                   <td>{{ $v['stock']}}</td>

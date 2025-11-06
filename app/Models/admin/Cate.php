@@ -5,6 +5,7 @@ namespace App\Models\admin;
 use App\Models\index\Banner;
 use App\Models\index\Brand;
 use App\Models\index\Good;
+use App\Models\index\Post;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,6 +44,24 @@ class Cate extends Model
     {
         return $this->belongsToMany(Good::class, 'good_cate', 'cate_id', 'good_id');
     }
+
+     public function hasgoods(): bool
+     {
+         return $this->goods()->exists();
+     }
+
+    /**
+     * 子分类
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'cate_id');
+    }
+
+     public function hasposts(): bool
+     {
+         return $this->posts()->exists();
+     }
 
     /**
      * 子分类

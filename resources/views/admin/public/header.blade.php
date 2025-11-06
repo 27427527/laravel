@@ -11,11 +11,19 @@
        <link rel="stylesheet" href="{{asset('css/font.css')}}">
     <link rel="stylesheet" href="{{asset('css/login.css')}}">
 	  <link rel="stylesheet" href="{{asset('css/xadmin.css')}}">
+	
 	  <link rel="stylesheet" href="{{asset('css/common.css')}}">
     <script type="text/javascript" src="{{asset('js/jquery.min.js')}}"></script>
     <script src="{{asset('lib/layui/layui.js')}}" charset="utf-8"></script>
     <script src="{{asset('js/xadmin.js')}}" charset="utf-8"></script>
-    <script src="{{asset('js/common.js')}}" charset="utf-8"></script>
+    <link href="{{ asset('ueditor/themes/default/css/ueditor.css') }}" rel="stylesheet">
+     <!-- UEditor 配置文件 -->
+    <script type="text/javascript" src="{{ asset('ueditor/ueditor.config.js') }}"></script>
+    <!-- UEditor 核心文件 -->
+    <script type="text/javascript" src="{{ asset('ueditor/ueditor.all.js') }}"></script>
+    <!-- 中文语言包 -->
+    <script type="text/javascript" src="{{ asset('ueditor/lang/zh-cn/zh-cn.js') }}"></script>
+      <script src="{{asset('js/common.js')}}" charset="utf-8"></script>
         <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
         <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>

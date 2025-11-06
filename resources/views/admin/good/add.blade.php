@@ -24,13 +24,7 @@
                     </td>
                     </tr>  
 
-                     <tr class="row">
-                    <td> 描叙</td>
-                    <td>
-                        <input type="text" id="description" name="description" 
-                        autocomplete="off" class="layui-input">
-                    </td>
-                    </tr> 
+                 
 
 
                     <tr class="row">
@@ -134,6 +128,16 @@
                       </td>
                     </tr>
 
+                  <tr >
+                    <td>商品详情</td>
+                    <td>
+                      <textarea class="editor" id="container" name="description"  rows="10"></textarea>
+                       
+                    </td>
+                    </tr> 
+
+
+
                    
 
                 </tbody>
@@ -152,6 +156,8 @@
         </div>
     </div>
     <script>
+init_Editor();
+
         layui.use(['form','layer','upload'], function(){
             $ = layui.jquery;
           var form = layui.form

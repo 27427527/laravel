@@ -2,45 +2,71 @@
 
 namespace App\Http\Controllers\index;
 
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
+use App\Http\Controllers\Controller;
+use App\Models\admin\Cate;
 use App\Models\index\Post;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function __construct()
+    public function index(Request $request)
     {
-        $this->middleware('auth')->except(['index', 'show']);
+        // $posts = Post::published()
+        //             ->latest('published_at')
+        //             ->paginate(10);
+
+        $cate_id = $request->cate_id;
+        $cate = Cate::find($cate_id);
+        $post_list = $cate->posts;
+        $nav_list = $cate->getAncestors();
+
+        return view('admin.post.index', ['cate' => $cate, 'post_list' => $post_list, 'nav_list' => $nav_list]);
     }
 
-    public function index()
+    public function create(Request $request)
     {
-        $posts = Post::published()
-                    ->latest('published_at')
-                    ->paginate(10);
+        $cate_id = $request->cate_id;
 
-        return view('posts.index', compact('posts'));
+        return view('admin.post.add', ['cate_id' => $cate_id]);
     }
 
-    public function create()
+    public function store(Request $request)
     {
-        return view('posts.create');
-    }
+        $input = $request->all();
 
-    public function store(StorePostRequest $request)
-    {
-        $data = $request->validated();
-        $data['user_id'] = auth()->id();
+        // dd($input);
+        $validator = Validator::make($input, [
+            'title' => 'required|string',
+            'image' => 'required|string',
+            'content' => 'required|string',
+            'cate_id' => 'required|exists:cates,cate_id',
+        ]);
 
-        if ($request->hasFile('featured_image')) {
-            $data['featured_image'] = $request->file('featured_image')->store('posts', 'public');
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 200);
         }
+        $input['id'] = $request->user('admin')->id;
 
-        $post = Post::create($data);
+        $post = Post::create($input);
+        $post->excerpt = $post->getExcerptAttribute('');
+        $rs = $post->save();
 
-        return redirect()->route('posts.show', $post)
-                        ->with('success', '文章创建成功！');
+        if ($rs) {
+            return response()->json([
+                'success' => true,
+                'message' => '添加成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '添加失败',
+            ], 200);
+        }
     }
 
     public function show(Post $post)
@@ -52,45 +78,91 @@ class PostController extends Controller
         return view('posts.show', compact('post'));
     }
 
-    public function edit(Post $post)
+    public function edit($id)
     {
-        $this->authorize('update', $post);
+        $post = Post::find($id);
 
-        return view('posts.edit', compact('post'));
+        return view('admin.post.edit', compact('post'));
     }
 
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $post);
+        $input = $request->all();
 
-        $data = $request->validated();
+        // dd($input);
+        $validator = Validator::make($input, [
+            'title' => 'required|string',
+            'image' => 'required|string',
+            'content' => 'required|string',
 
-        if ($request->hasFile('featured_image')) {
-            // 删除旧图片
-            if ($post->featured_image) {
-                Storage::disk('public')->delete($post->featured_image);
-            }
-            $data['featured_image'] = $request->file('featured_image')->store('posts', 'public');
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 200);
         }
+        $post = Post::find($id);
 
-        $post->update($data);
+        $rs = $post->update($input);
 
-        return redirect()->route('posts.show', $post)
-                        ->with('success', '文章更新成功！');
+        if ($rs) {
+            return response()->json([
+                'success' => true,
+                'message' => '添加成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '添加失败',
+            ], 200);
+        }
     }
 
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        $this->authorize('delete', $post);
+        $post = Post::find($id);
 
         // 删除图片
-        if ($post->featured_image) {
-            Storage::disk('public')->delete($post->featured_image);
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
         }
 
-        $post->delete();
-
-        return redirect()->route('posts.index')
-                        ->with('success', '文章删除成功！');
+        $rs = $post->delete();
+        if ($rs) {
+            return response()->json([
+                'success' => true,
+                'message' => '删除成功',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '删除失败',
+            ], 200);
+        }
     }
+
+     public function status(Request $request, $id)
+     {
+         $post = Post::find($id);
+
+         $post->is_published = $post->is_published == '1' ? '0' : '1';
+         if ($post->is_published == 1) {
+             $post->published_at = now();
+         }
+         $res = $post->save();
+
+         if ($res) {
+             return response()->json([
+                 'success' => true,
+                 'message' => '修改成功',
+             ], 200);
+         } else {
+             return response()->json([
+                 'success' => false,
+                 'message' => '修改失败',
+             ], 200);
+         }
+     }
 }

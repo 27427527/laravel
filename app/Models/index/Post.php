@@ -2,6 +2,7 @@
 
 namespace App\Models\index;
 
+use App\Models\admin\Cate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ class Post extends Model
 
     protected $fillable = [
         'title',
+        'cate_id',
         'content',
         'slug',
         'excerpt',
@@ -32,6 +34,7 @@ class Post extends Model
         'id',
         'meta_title',
         'meta_description',
+
     ];
 
     protected $casts = [
@@ -61,13 +64,18 @@ class Post extends Model
         return $this->belongsTo(Admin::class);
     }
 
+       public function cate(): BelongsTo
+       {
+           return $this->belongsTo(Cate::class);
+       }
+
     public function getExcerptAttribute($value)
     {
         if ($value) {
             return $value;
         }
 
-        return Str::limit(strip_tags($this->content), 150);
+        return Str::limit(strip_tags($this->content), 80);
     }
 
     public function scopePublished($query)

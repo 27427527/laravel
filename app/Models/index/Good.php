@@ -36,7 +36,6 @@ class Good extends Model
         'is_active',
         'sort_order',
         'specifications',
-        'category_id',
         'brand_id',
     ];
 

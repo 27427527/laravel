@@ -23,13 +23,7 @@
                     </td>
                     </tr>  
 
-                     <tr class="row">
-                    <td> 描叙</td>
-                    <td>
-                        <input type="text" id="description" name="description" value="{{ $good->description }}"
-                        autocomplete="off" class="layui-input">
-                    </td>
-                    </tr> 
+                 
 
 
                     <tr class="row">
@@ -141,7 +135,13 @@
                       </td>
                     </tr>
 
-                   
+                    <tr class="editor-tr">
+                    <td>商品详情</td>
+                    <td>
+                      <textarea class="editor" id="container" name="description"  rows="5">{{ $good->description }}</textarea>
+                       
+                    </td>
+                    </tr> 
 
                 </tbody>
                 </table>
@@ -159,6 +159,12 @@
         </div>
     </div>
     <script>
+
+  $(function () {
+
+init_Editor();
+
+      
         layui.use(['form','layer','upload'], function(){
             $ = layui.jquery;
           var form = layui.form
@@ -252,6 +258,11 @@
           form.on('submit(add)', function(data){
             // console.log(data);
             //发异步，把数据提交给php
+
+
+             
+
+      
             
               $.ajax({
                url : "/admin/good/{{ $good->good_id }}",  
@@ -315,7 +326,7 @@ $(".layui-upload-list").on("mouseleave", ".pre-li", function () {
     $(this).find(".iconfont").hide();
 });
 
-    </script>
+  });  </script>
    
   </body>
 

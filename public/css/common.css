@@ -24,3 +24,8 @@
     display: none;
     cursor: pointer;
 }
+
+.editor {
+    width: 100%;
+
+}

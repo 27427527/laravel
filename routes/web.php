@@ -20,6 +20,10 @@ Route::get('/', function () {
     return 'helloworld';
 });
 
+// UEditor 路由
+Route::any('/ueditor/upload', [App\Http\Controllers\UEditorController::class, 'upload'])
+     ->name('ueditor.upload')->middleware('admin.auth');
+
 // 后台路由
 
 Route::prefix('admin')->group(function () {
@@ -50,6 +54,11 @@ Route::prefix('admin')->group(function () {
 
         // 品牌
         Route::resource('/brand', App\Http\Controllers\index\BrandController::class)->middleware('permission:brand.index');
+
+        // 文章
+        Route::resource('/post', App\Http\Controllers\index\PostController::class)->middleware('permission:post.index');
+        // 发布
+        Route::put('/post/status/{id}', [App\Http\Controllers\index\PostController::class, 'status'])->middleware('permission:post.index');
 
         // 商品
         Route::resource('/good', App\Http\Controllers\index\GoodController::class)->middleware('permission:good.index');
