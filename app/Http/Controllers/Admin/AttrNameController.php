@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\index;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\index\AttrPrice;
-use App\Models\index\Good;
+use App\Models\index\AttrName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
-class AttrPriceController extends Controller
+class AttrNameController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -38,40 +36,24 @@ class AttrPriceController extends Controller
      */
     public function store(Request $request)
     {
-        $list = $request->data;
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'good_id' => 'required|exists:goods,good_id',
 
-        foreach ($list as $item) {
-            $validator = Validator::make($item, [
-                'good_id' => 'required|exists:goods,good_id',
-                'price' => 'required|numeric|min:0',
-                'stock' => 'required|integer|min:0',
-                'attr' => 'required|string',
-            ]);
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $validator->errors()->first(),
-                ], 200);
-            }
-        }
+        $attrname = AttrName::create($validated);
 
-        try {
-            DB::transaction(function () use ($list, $request) {
-                $good = Good::find($request->good_id);
-
-                $good->attr_prices()->delete();
-                $rs = AttrPrice::insert($list);
-            });
-
+        if ($attrname) {
             return response()->json([
                 'success' => true,
-                'message' => '创建成功',
+                'message' => '添加成功',
+                'attr_name_id' => $attrname->attr_name_id,
             ], 200);
-        } catch (\Exception $e) {
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => '添加失败',
             ], 200);
         }
     }
@@ -117,6 +99,27 @@ class AttrPriceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            DB::transaction(function () use ($id) {
+                $attrname = AttrName::find($id);
+
+                // 删除属性值
+                $attrname->attr_vals()->delete();
+                // 删除属性名
+                $attrname->delete();
+                // 删除关联价格
+                $attrname->goods->attr_prices()->delete();
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => '删除成功',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 200);
+        }
     }
 }

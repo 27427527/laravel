@@ -122,24 +122,30 @@ class Cate extends Model
     /**
      * 递归获取所有子孙分类
      */
-    public function getAllDescendants()
+    public function getAllDescendants($is_active = false)
     {
         $descendants = [];
-        $this->loadDescendantsRecursive($this->cate_id, $descendants);
+        $this->loadDescendantsRecursive($this->cate_id, $descendants, $is_active);
 
         return $descendants;
     }
 
-    private function loadDescendantsRecursive($parent_id, &$descendants)
+// 所有子孙分类
+    private function loadDescendantsRecursive($parent_id, &$descendants, $is_active)
     {
         $children = self::withCount('children')
+            ->where(function ($query) use ($is_active) {
+                if ($is_active == true) {
+                    $query->where('is_active', '1');
+                }
+            })
             ->where('parent_id', $parent_id)
             ->orderBy('order', 'asc')
             ->get();
 
         foreach ($children as $child) {
             $descendants[] = $child;
-            $this->loadDescendantsRecursive($child->cate_id, $descendants);
+            $this->loadDescendantsRecursive($child->cate_id, $descendants, $is_active);
         }
     }
 

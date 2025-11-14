@@ -2,6 +2,7 @@
 
 namespace App\Models\index;
 
+use App\Casts\OrderedJson;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +24,13 @@ class AttrPrice extends Model
 
     // 允许批量赋值的字段
 
-    protected $fillable = ['attr_price_id', 'price', 'attr', 'stock', 'good_id'];
+    protected $fillable = ['attr_price_id', 'price', 'org_price', 'attr', 'stock', 'good_id'];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'attr' => OrderedJson::class,  // 使用原生的 array cast
+    ];
 
     public function goods(): BelongsTo
     {

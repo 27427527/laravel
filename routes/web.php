@@ -15,9 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/login', function () {
+    return redirect()->route('admin.login');
+});
+
 Route::get('/', function () {
-    // return view('welcome');
-    return 'helloworld';
+    return redirect()->route('admin.login');
 });
 
 // UEditor 路由
@@ -50,35 +53,45 @@ Route::prefix('admin')->group(function () {
         });
 
         // 轮播图
-        Route::resource('/banner', App\Http\Controllers\index\BannerController::class)->middleware('permission:banner.index');
+        Route::resource('/banner', App\Http\Controllers\Admin\BannerController::class)->middleware('permission:banner.index');
 
         // 品牌
-        Route::resource('/brand', App\Http\Controllers\index\BrandController::class)->middleware('permission:brand.index');
+        Route::resource('/brand', App\Http\Controllers\Admin\BrandController::class)->middleware('permission:brand.index');
 
         // 文章
-        Route::resource('/post', App\Http\Controllers\index\PostController::class)->middleware('permission:post.index');
+        Route::resource('/post', App\Http\Controllers\Admin\PostController::class)->middleware('permission:post.index');
         // 发布
-        Route::put('/post/status/{id}', [App\Http\Controllers\index\PostController::class, 'status'])->middleware('permission:post.index');
+        Route::put('/post/status/{id}', [App\Http\Controllers\Admin\PostController::class, 'status'])->middleware('permission:post.index');
 
         // 商品
-        Route::resource('/good', App\Http\Controllers\index\GoodController::class)->middleware('permission:good.index');
+        Route::resource('/good', App\Http\Controllers\Admin\GoodController::class)->middleware('permission:good.index');
 
         // 商品价格编辑
-        Route::get('/good/eprice/{id}/edit', [App\Http\Controllers\index\GoodController::class, 'eprice'])->middleware('permission:good.index');
+        Route::get('/good/eprice/{id}/edit', [App\Http\Controllers\Admin\GoodController::class, 'eprice'])->middleware('permission:good.index');
         // 商品属性编辑
-        Route::get('/good/attr/{id}/edit', [App\Http\Controllers\index\GoodController::class, 'attr'])->middleware('permission:good.index');
+        Route::get('/good/attr/{id}/edit', [App\Http\Controllers\Admin\GoodController::class, 'attr'])->middleware('permission:good.index');
         // 推荐位
-        Route::put('/good/featured/{id}', [App\Http\Controllers\index\GoodController::class, 'featured'])->middleware('permission:good.index');
+        Route::put('/good/featured/{id}', [App\Http\Controllers\Admin\GoodController::class, 'featured'])->middleware('permission:good.index');
         // 上架
-        Route::put('/good/active/{id}', [App\Http\Controllers\index\GoodController::class, 'active'])->middleware('permission:good.index');
+        Route::put('/good/active/{id}', [App\Http\Controllers\Admin\GoodController::class, 'active'])->middleware('permission:good.index');
         //  排序
-        Route::put('/good/order/{id}', [App\Http\Controllers\index\GoodController::class, 'order'])->middleware('permission:good.index');
+        Route::put('/good/order/{id}', [App\Http\Controllers\Admin\GoodController::class, 'order'])->middleware('permission:good.index');
         // 商品属性名
-        Route::resource('/attrname', App\Http\Controllers\index\AttrNameController::class)->middleware('permission:good.index');
+        Route::resource('/attrname', App\Http\Controllers\Admin\AttrNameController::class)->middleware('permission:good.index');
         // 商品属性值
-        Route::resource('/attrval', App\Http\Controllers\index\AttrValController::class)->middleware('permission:good.index');
+        Route::resource('/attrval', App\Http\Controllers\Admin\AttrValController::class)->middleware('permission:good.index');
         // 商品属性价格
-        Route::resource('/attrprice', App\Http\Controllers\index\AttrPriceController::class)->middleware('permission:good.index');
+        Route::resource('/attrprice', App\Http\Controllers\Admin\AttrPriceController::class)->middleware('permission:good.index');
+
+        // 订单管理路由
+        Route::resource('/order', App\Http\Controllers\Admin\OrderController::class)->middleware('role:max');
+        Route::put('/order/status/{id}', [App\Http\Controllers\Admin\OrderController::class, 'status']);
+
+        // 会员管理路由
+        Route::resource('/member', App\Http\Controllers\Admin\MemberController::class)->middleware('role:max');
+        Route::put('/member/status/{id}', [App\Http\Controllers\Admin\MemberController::class, 'status']);
+        Route::put('/member/is_vip/{id}', [App\Http\Controllers\Admin\MemberController::class, 'is_vip']);
+        Route::get('/member/vip/list', [App\Http\Controllers\Admin\MemberController::class, 'vip']);
 
         // 用户管理路由
 

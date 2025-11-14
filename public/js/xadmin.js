@@ -87,7 +87,7 @@
             var w = 800;
         }
         if (h == null || h == "") {
-            var h = 600;
+            var h = 700;
         }
         var index = layer.open({
             type: 2,

@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('attr_price', function (Blueprint $table) {
             $table->id('attr_price_id');
             $table->decimal('price', 10, 2); // 价格
+            $table->decimal('org_price', 10, 2); // 原价
             $table->foreignId('good_id');
             $table->json('attr')->nullable(); // 规格属性
             $table->integer('stock')->default(0); // 库存

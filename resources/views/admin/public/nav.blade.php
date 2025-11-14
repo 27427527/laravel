@@ -9,33 +9,17 @@
                         <ul class="sub-menu">
                          
                             <li>
-                                <a onclick="xadmin.add_tab('会员列表','{{ url('admin/user') }}',true)">
+                                <a onclick="xadmin.add_tab('会员列表','{{ url('admin/member') }}',true)">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>会员列表</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('会员删除','member-del.html')">
+                                <a onclick="xadmin.add_tab('VIP列表','{{ url('admin/member/vip/list') }}')">
                                     <i class="iconfont">&#xe6a7;</i>
-                                    <cite>会员删除</cite></a>
+                                    <cite>VIP列表</cite></a>
                             </li>
-                            <li>
-                                <a href="javascript:;">
-                                    <i class="iconfont">&#xe70b;</i>
-                                    <cite>会员管理</cite>
-                                    <i class="iconfont nav_right">&#xe697;</i></a>
-                                <ul class="sub-menu">
-                                    <li>
-                                        <a onclick="xadmin.add_tab('会员删除','member-del.html')">
-                                            <i class="iconfont">&#xe6a7;</i>
-                                            <cite>会员删除</cite></a>
-                                    </li>
-                                    <li>
-                                        <a onclick="xadmin.add_tab('等级管理','member-list1.html')">
-                                            <i class="iconfont">&#xe6a7;</i>
-                                            <cite>等级管理</cite></a>
-                                    </li>
-                                </ul>
-                            </li>
+
+                         
                         </ul>
                     </li>
                     <li>
@@ -45,15 +29,11 @@
                             <i class="iconfont nav_right">&#xe697;</i></a>
                         <ul class="sub-menu">
                             <li>
-                                <a onclick="xadmin.add_tab('订单列表','order-list.html')">
+                                <a onclick="xadmin.add_tab('订单列表','{{ url('admin/order') }}')">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>订单列表</cite></a>
                             </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('订单列表1','order-list1.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>订单列表1</cite></a>
-                            </li>
+                            
                         </ul>
                     </li>
 

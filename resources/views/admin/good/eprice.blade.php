@@ -29,7 +29,7 @@
       <th>{{ $item->name }}</th>
   @endforeach
 
-  <th>库存</th><th>价格</th></tr>
+  <th>库存</th><th>价格</th><th>原价</th></tr>
 
 <tr>
 
@@ -57,7 +57,7 @@ foreach ($price_list as $price) {
 
   
 
- $price_arr=json_decode($price->attr,true);
+ $price_arr=$price->attr;
  
 
  $rs=arraysEqualIgnoreOrder2($item,$price_arr);
@@ -75,14 +75,16 @@ foreach ($price_list as $price) {
 @if (!empty($new_arr))
 
   <td><input class='layui-input'  value="{{ $new_arr['stock'] }}" name='data[{{ $count }}][stock]'></td>
-  <td><input class='layui-input'  value="{{ $new_arr['price'] }}" name='data[{{ $count }}][price]'>
+  <td><input class='layui-input'  value="{{ $new_arr['price'] }}" name='data[{{ $count }}][price]'></td>
+  <td><input class='layui-input'  value="{{ $new_arr['org_price'] }}" name='data[{{ $count }}][org_price]'>
 
-    <input type="hidden" data-attr="{{$price_list[$count]->attr}}"  value="{{ json_encode($item, JSON_UNESCAPED_UNICODE) }}" name='data[{{ $count }}][attr]'>
+    <input type="hidden" data-attr="{{ json_encode($price_arr, JSON_UNESCAPED_UNICODE)}}"  value="{{ json_encode($item, JSON_UNESCAPED_UNICODE) }}" name='data[{{ $count }}][attr]'>
     <input type="hidden"  value="{{ $good->good_id}}" name='data[{{ $count }}][good_id]'>
 
  @else
   <td><input class='layui-input'  value="0" name='data[{{ $count }}][stock]'></td>
-  <td><input class='layui-input'  value="{{ $good->price }}" name='data[{{ $count }}][price]'>
+  <td><input class='layui-input'  value="{{ $good->price }}" name='data[{{ $count }}][price]'></td>
+  <td><input class='layui-input'  value="{{ $good->original_price }}" name='data[{{ $count }}][org_price]'>
 
     <input type="hidden"   value="{{ json_encode($item, JSON_UNESCAPED_UNICODE) }}" name='data[{{ $count }}][attr]'>
     <input type="hidden"  value="{{ $good->good_id}}" name='data[{{ $count }}][good_id]'>

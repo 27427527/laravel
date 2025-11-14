@@ -57,7 +57,7 @@ class AuthController extends Controller
 
         // 删除用户所有现有令牌（可选）
         $user->tokens()->delete();
-
+        $address_list = $user->address;
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -65,6 +65,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
+            'address_list' => $address_list,
             'state' => 200,
         ]);
     }
@@ -86,7 +87,16 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $user = $request->user();
+
+        $address_list = $user->address;
+
+        return response()->json([
+            'message' => '获取信息成功',
+            'address_list' => $address_list,
+            'user' => $user,
+
+        ]);
     }
 
     /**

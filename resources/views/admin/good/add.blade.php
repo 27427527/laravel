@@ -24,6 +24,14 @@
                     </td>
                     </tr>  
 
+                       <tr class="row">
+                    <td>简介<span class="x-red">*</span></td>
+                    <td>
+                        <input type="text" id="intro" name="intro"    lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </td>
+                    </tr>  
+
                  
 
 
@@ -57,7 +65,26 @@
                         <input type="text" id="sku" name="sku" 
                         autocomplete="off" class="layui-input">
                     </td>
-                    </tr>  
+                    </tr> 
+                    
+                       <tr class="row">
+                    <td>参数  <a id="add_name" class="layui-btn">增加</a></td>
+                    <td>
+                      <table class="layui-table layui-form" id="attr_name_table">
+                      <tbody id="attr_body">
+                      <tr><th>参数名</th><th>参数值</th><th>操作</th></tr>
+
+                      <tr class="specifications_tr">
+                        <td><input type="text"  name="specifications_name[]" autocomplete="off" class="layui-input"></td>
+                        <td><input type="text" name="specifications_val[]" autocomplete="off" class="layui-input"></td>
+                        <td><a class='del_val layui-btn layui-btn-danger layui-btn-sm'>删除</a></td>
+                      </tr>
+
+                      </tbody>
+                      </table>
+                    
+                    </td>
+                    </tr> 
 
                    
 
@@ -157,6 +184,22 @@
     </div>
     <script>
 init_Editor();
+
+        // 添加新参数
+$('#add_name').click(function(){
+ 
+
+  var tr="<tr class='specifications_tr'><td><input class='layui-input' name='specifications_name[]'></td><td><input class='layui-input' name='specifications_val[]'></td><td><a  class='del_val layui-btn layui-btn-danger layui-btn-sm'>删除</a></td></tr>";
+ 
+  // 归属 属性值表添加一行
+    $('#attr_body').append(tr);
+});
+
+       // 删除当前属性值
+$('#attr_body').on('click','.del_val',function(){
+   
+    $(this).parents('.specifications_tr').remove();
+});
 
         layui.use(['form','layer','upload'], function(){
             $ = layui.jquery;

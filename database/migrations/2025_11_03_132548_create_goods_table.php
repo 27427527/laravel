@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('goods', function (Blueprint $table) {
             $table->id('good_id');
             $table->string('name'); // 商品名称
+            $table->string('intro'); // 简介
             $table->text('description')->nullable(); // 商品描述
             $table->decimal('price', 10, 2); // 价格
             $table->decimal('original_price', 10, 2)->nullable(); // 原价
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false); // 是否推荐
             $table->boolean('is_active')->default(true); // 是否上架
             $table->integer('sort_order')->default(0); // 排序
-            $table->text('specifications')->nullable(); // 规格参数
+            $table->json('specifications')->nullable(); // 规格参数
             $table->foreignId('brand_id')->nullable(); // 品牌
             $table->timestamps();
             $table->softDeletes(); // 软删除

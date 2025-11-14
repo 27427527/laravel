@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\index;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\index\AttrName;
 use App\Models\index\AttrPrice;
-use App\Models\index\AttrVal;
+use App\Models\index\Good;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
-class AttrValController extends Controller
+class AttrPriceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -38,54 +38,35 @@ class AttrValController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'attr_name' => 'required|array',
+        $list = $request->data;
 
-        ]);
+        foreach ($list as $item) {
+            $validator = Validator::make($item, [
+                'good_id' => 'required|exists:goods,good_id',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'attr' => 'required|string',
+            ]);
 
-        $list = $request->attr_name;
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                ], 200);
+            }
+        }
 
         try {
-            DB::transaction(function () use ($list) {
-                $data = [];
+            DB::transaction(function () use ($list, $request) {
+                $good = Good::find($request->good_id);
 
-                foreach ($list as $k => $item) {
-                    $attrname = AttrName::find($k);
-                    $attrname->attr_vals()->delete();
-                    foreach ($item as $k2 => $v) {
-                        if ($v) {
-                            $data[] = ['name' => $v, 'attr_name_id' => $k];
-                        }
-                    }
-                }
-
-                $rs = AttrVal::insert($data);
-
-                // 所有属性值
-                $price_arr = $attrname->goods->allAttr_vals();
-
-                // 所有价格
-                $list = $attrname->goods->price_ids();
-
-                $del = [];
-
-                foreach ($list as $item) {
-                    $attr_arr = json_decode($item['attr'], true);
-
-                    foreach ($attr_arr as $v) {
-                        if (! in_array($v, $price_arr)) {
-                            $del[] = $item['attr_price_id'];
-                        }
-                    }
-                }
-
-                $del = array_unique($del);
-                AttrPrice::destroy($del);
+                $good->attr_prices()->delete();
+                $rs = AttrPrice::insert($list);
             });
 
             return response()->json([
                 'success' => true,
-                'message' => '删除成功',
+                'message' => '创建成功',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

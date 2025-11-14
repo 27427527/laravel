@@ -25,6 +25,7 @@ class Good extends Model
 
     protected $fillable = [
         'name',
+        'intro',
         'description',
         'price',
         'original_price',
@@ -130,11 +131,15 @@ class Good extends Model
          })->toArray();
      }
 
-    //  attr_price存在的值
-      public function price_ids()
-      {
-          return $this->attr_prices->toArray();
-      }
+     public function all_attrs()
+     {
+         return $this->attr_names->flatMap(function ($attr_names) {
+             return  [
+                 'attr_name' => $attr_names->name,
+                 'attr_name' => $attr_names->attr_vals->pluck('name'),
+             ];
+         });
+     }
 
      public function attr_names(): HasMany
      {
