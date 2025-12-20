@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\admin\Cate;
 use App\Models\index\Post;
+use App\Providers\RedisPostServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
+    protected $RedisPostServiceProvider;
+
+    public function __construct(RedisPostServiceProvider $RedisPostServiceProvider)
+    {
+        $this->RedisPostServiceProvider = $RedisPostServiceProvider;
+    }
+
     public function index(Request $request)
     {
         // $posts = Post::published()
@@ -106,6 +114,13 @@ class PostController extends Controller
         $post = Post::find($id);
 
         $rs = $post->update($input);
+
+        $post->excerpt = $post->getExcerptAttribute('');
+
+        $post->save();
+
+        // 修改缓存 先删除
+        $this->RedisPostServiceProvider->deleteArticleCache($id);
 
         if ($rs) {
             return response()->json([

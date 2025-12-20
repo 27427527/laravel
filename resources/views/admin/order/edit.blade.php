@@ -10,48 +10,52 @@
 
                     <tbody>
                         
-                    <tr class="row"><td>登录名<span class="x-red">*</span></td>
-                    <td><input type="text" id="username" name="username" required="" value="{{ $user['username'] }}"  lay-verify="required"
+                    <tr class="row"><td>快递名称<span class="x-red">*</span></td>
+                    <td><input type="text" id="express_name" name="express_name" required="" value="{{ $order['express_name'] }}"  lay-verify="required"
                         autocomplete="off" class="layui-input"></td>
                     </tr>  
 
-                    <tr class="row"><td>姓名<span class="x-red">*</span></td>
-                    <td><input type="text" id="real_name" name="real_name" required=""  value="{{ $user['real_name'] }}" lay-verify="required"
+                       <tr class="row"><td>快递单号</td>
+                    <td><input type="text" id="express_no" name="express_no" value="{{ $order['express_no'] }}" 
                         autocomplete="off" class="layui-input"></td>
-                    </tr> 
+                    </tr>  
 
-                     <tr class="row"><td>手机<span class="x-red">*</span></td>
-                    <td><input type="text" id="phone" name="phone" required="" value="{{ $user['phone'] }}"  lay-verify="phone"
-                        autocomplete="off" class="layui-input"></td>
-                    </tr> 
+                       <tr class="row"><td>物流信息</td>
+                    <td>
+                        
+                         <textarea class=""  style="width:100%;" id="express_info" name="express_info"  rows="5">{{  $order['express_info'] }}</textarea>
+               
+                    </td>
+                    </tr>  
 
 
-   <tr>
-                                <td>
-                                  权限角色
-                                </td>
-                          
-                                <td>
-                                    <div class="layui-input-block">    
-         
-                    @foreach ($role_list as $item )
+                       <tr class="row"><td>后台备注</td>
+                    <td>
+                        
+                         <textarea class=""  style="width:100%;" id="note" name="note"  rows="5">{{  $order['note'] }}</textarea>
+               
+                    </td>
+                    </tr>  
 
- 
-                         
 
- <input type="checkbox" name="id[]" lay-skin="primary" {{ in_array($item['role_id'],$user_roles)?'checked':'' }} value="{{ $item['role_id'] }}"  title="{{ $item['name'] }}" >
-                 @endforeach
-                                    </div>
-                                </td>
+                       <tr class="row"><td>订单状态</td>
+                    <td>
+                        
+                           <select name="status" >
+                                              <option value="">请选择</option>
 
-                               
-                            </tr>
- 
+                                                @foreach ($state_arr as $k=>$v)
+                                                    <option value="{{ $k }}">{{ $v }}</option>
+                                                @endforeach
 
-               <tr class="row"><td>密码( 6到16个字符)</td>
-                    <td><input type="password" id="password" name="password" required=""  
-                        autocomplete="off" class="layui-input"></td>
-                    </tr> 
+                                           
+                                         
+                                            </select>
+               
+                    </td>
+                    </tr>  
+
+                  
 
                  
 
@@ -94,7 +98,7 @@
                 function(data) {
 
               $.ajax({
-               url : "/admin/user/"+{{ $user['id'] }},  
+               url : "/admin/order/"+{{ $order['order_id'] }},  
                type : "PUT",  
                data : $('#user_form').serialize(),  
                success : function(data) { 

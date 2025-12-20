@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\admin\Cate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +13,9 @@ use Illuminate\Support\Str;
 
 class CateController extends Controller
 {
+    // 导航列表前缀
+    const NAV_KEY_PREFIX = 'post_nav_list:';
+
     /**
      * 显示分类列表
      */
@@ -78,6 +82,9 @@ class CateController extends Controller
         $cate = Cate::create($input);
 
         if ($cate) {
+            // 删除导航缓存
+            Cache::forget($this::NAV_KEY_PREFIX.'18');
+
             return response()->json([
                 'success' => true,
                 'message' => '添加成功',
@@ -134,6 +141,9 @@ class CateController extends Controller
 
                 Storage::disk('public')->delete($old_img);
             }
+
+            // 删除导航缓存
+            Cache::forget($this::NAV_KEY_PREFIX.'18');
 
             return response()->json([
                 'success' => true,
@@ -198,6 +208,9 @@ class CateController extends Controller
         $rs = $cate->delete();
 
         if ($rs) {
+            // 删除导航缓存
+            Cache::forget($this::NAV_KEY_PREFIX.'18');
+
             return response()->json([
                 'success' => true,
                 'message' => '删除成功',

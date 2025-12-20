@@ -34,29 +34,30 @@ class Post extends Model
         'id',
         'meta_title',
         'meta_description',
+        'view_count',
 
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
-        'published_at' => 'datetime',
+        'published_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($post) {
-            if (empty($post->slug)) {
-                $post->slug = Str::slug($post->title);
-            }
-        });
+        // static::creating(function ($post) {
+        //     if (empty($post->slug)) {
+        //         $post->slug = Str::slug($post->title);
+        //     }
+        // });
 
-        static::updating(function ($post) {
-            if ($post->isDirty('title') && empty($post->slug)) {
-                $post->slug = Str::slug($post->title);
-            }
-        });
+        // static::updating(function ($post) {
+        //     if ($post->isDirty('title') && empty($post->slug)) {
+        //         $post->slug = Str::slug($post->title);
+        //     }
+        // });
     }
 
     public function user(): BelongsTo
@@ -66,7 +67,7 @@ class Post extends Model
 
        public function cate(): BelongsTo
        {
-           return $this->belongsTo(Cate::class);
+           return $this->belongsTo(Cate::class, 'cate_id');
        }
 
     public function getExcerptAttribute($value)

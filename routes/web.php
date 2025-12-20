@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminViewController;
 use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\index\CateController;
+use App\Http\Controllers\index\ProxyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('/proxy', [ProxyController::class, 'fetchData']);
+Route::post('/proxy', [ProxyController::class, 'postData']);
+Route::get('/cate', [CateController::class, 'show']);
 Route::get('/login', function () {
     return redirect()->route('admin.login');
 });
@@ -51,6 +55,10 @@ Route::prefix('admin')->group(function () {
             Route::get('/', 'index');
             Route::get('/welcom', 'welcom');
         });
+
+        // 公共频道
+        Route::get('/channel/public ', [App\Http\Controllers\Admin\MessageController::class, 'public']);
+        Route::post('/channel/public ', [App\Http\Controllers\Admin\MessageController::class, 'adminSendMessage']);
 
         // 轮播图
         Route::resource('/banner', App\Http\Controllers\Admin\BannerController::class)->middleware('permission:banner.index');

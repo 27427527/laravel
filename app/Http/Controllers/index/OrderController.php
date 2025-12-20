@@ -112,7 +112,7 @@ class OrderController extends Controller
                 $amounts = $this->calculateOrderAmounts($data['items']);
 
                 $address = Address::where('id', $data['id'])
-                ->where('address_id', $data['id'])->first();
+                ->where('address_id', $data['address'])->first();
 
                 $all = $address->province.$address->city.$address->district.$address->detail;
 
@@ -123,6 +123,8 @@ class OrderController extends Controller
                     'total_amount' => $amounts['total_amount'],
                     'pay_amount' => $amounts['pay_amount'],
                     'status' => Order::STATUS_PENDING,
+                    'name' => $address->name ?? null,
+                    'phone' => $address->phone ?? null,
                     'remark' => $data['remark'] ?? null,
                     'address' => $all ?? null,
                     'payment_method' => $data['payment_method'] ?? null,

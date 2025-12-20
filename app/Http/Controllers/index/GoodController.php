@@ -40,6 +40,42 @@ class GoodController extends Controller
          ]);
      }
 
+      public function search(Request $request)
+      {
+          $keyword = $request->keyword;
+
+          if (empty($keyword)) {
+              return response()->json([
+                  'message' => '参数错误',
+                  'success' => false,
+                  'state' => 400,
+              ]);
+          }
+
+          $search_list = Good::where('is_active', '1')
+           ->where(function ($query) use ($keyword) {
+               // 按关键字搜索
+
+               $query->where('name', 'like', '%'.$keyword.'%')
+                     ->orWhere('intro', 'like', "%{$keyword}%");
+           })
+          ->get()->toArray();
+
+          if (empty($search_list)) {
+              return response()->json([
+                  'message' => '未查询到相关商品',
+                  'success' => false,
+                  'state' => 200, ]);
+          }
+
+          return response()->json([
+              'message' => 'success',
+              'success' => true,
+              'search_list' => $search_list,
+              'state' => 200,
+          ]);
+      }
+
      public function details(Request $request)
      {
          $good_id = $request->good_id;

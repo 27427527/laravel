@@ -21,6 +21,7 @@ class GoodController extends Controller
         $good_list = $cate->goods()
                    ->with('brands')
                    ->with('cates')
+                   ->withSum('attr_prices as total_stock', 'stock')
                    ->active()
                    ->orderBy('sort_order')
                    ->orderBy('created_at', 'desc')

@@ -5,164 +5,77 @@ namespace App\Http\Controllers\index;
 use App\Http\Controllers\Controller;
 use App\Models\admin\Cate;
 use App\Models\index\Post;
+use App\Providers\RedisPostServiceProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    protected $RedisPostServiceProvider;
+
+    // 导航列表前缀
+    const NAV_KEY_PREFIX = 'post_nav_list:';
+
+    const CACHE_TTL = 3600; // 1小时缓存
+
+    public function __construct(RedisPostServiceProvider $RedisPostServiceProvider)
     {
-        // $posts = Post::published()
-        //             ->latest('published_at')
-        //             ->paginate(10);
-
-        $cate_id = $request->cate_id;
-        $cate = Cate::find($cate_id);
-        $post_list = $cate->posts;
-        $nav_list = $cate->getAncestors();
-
-        return view('admin.post.index', ['cate' => $cate, 'post_list' => $post_list, 'nav_list' => $nav_list]);
+        $this->RedisPostServiceProvider = $RedisPostServiceProvider;
     }
 
-    public function create(Request $request)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
     {
-        $cate_id = $request->cate_id;
+        // 先从 Redis 获取
+        $post = $this->RedisPostServiceProvider->getArticle($id);
 
-        return view('admin.post.add', ['cate_id' => $cate_id]);
-    }
-
-    public function store(Request $request)
-    {
-        $input = $request->all();
-
-        // dd($input);
-        $validator = Validator::make($input, [
-            'title' => 'required|string',
-            'image' => 'required|string',
-            'content' => 'required|string',
-            'cate_id' => 'required|exists:cates,cate_id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-            ], 200);
-        }
-        $input['id'] = $request->user('admin')->id;
-
-        $post = Post::create($input);
-        $post->excerpt = $post->getExcerptAttribute('');
-        $rs = $post->save();
-
-        if ($rs) {
-            return response()->json([
-                'success' => true,
-                'message' => '添加成功',
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => '添加失败',
-            ], 200);
-        }
-    }
-
-    public function show(Post $post)
-    {
-        if (! $post->is_published && ! auth()->check()) {
-            abort(404);
+        // 如果 Redis 中没有，从数据库获取并缓存
+        if (! $post) {
+            $post = Post::findOrFail($id);
+            $this->RedisPostServiceProvider->storeArticle($post);
+            $post = $this->RedisPostServiceProvider->getArticle($id);
         }
 
-        return view('posts.show', compact('post'));
-    }
+        // 记录阅读数
+        $userId = auth()->id();
+        $this->RedisPostServiceProvider->recordView($id, $userId);
 
-    public function edit($id)
-    {
-        $post = Post::find($id);
+        // 获取导航列表
 
-        return view('admin.post.edit', compact('post'));
-    }
+        $nav_list = Cache::remember($this::NAV_KEY_PREFIX.'18', $this::CACHE_TTL, function () {
+            $cate = Cate::find(18);
 
-    public function update(Request $request, $id)
-    {
-        $input = $request->all();
+            return  $cate->getAllDescendants();
+        });
 
-        // dd($input);
-        $validator = Validator::make($input, [
-            'title' => 'required|string',
-            'image' => 'required|string',
-            'content' => 'required|string',
+        return response()->json([
+            'message' => 'success',
+            'success' => true,
+            'post' => $post,
+            'nav_list' => $nav_list,
 
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-            ], 200);
-        }
-        $post = Post::find($id);
-
-        $rs = $post->update($input);
-
-        if ($rs) {
-            return response()->json([
-                'success' => true,
-                'message' => '添加成功',
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => '添加失败',
-            ], 200);
-        }
     }
 
-    public function destroy($id)
-    {
-        $post = Post::find($id);
-
-        // 删除图片
-        if ($post->image) {
-            Storage::disk('public')->delete($post->image);
-        }
-
-        $rs = $post->delete();
-        if ($rs) {
-            return response()->json([
-                'success' => true,
-                'message' => '删除成功',
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => '删除失败',
-            ], 200);
-        }
-    }
-
-     public function status(Request $request, $id)
+     public function list(Request $request, $id)
      {
-         $post = Post::find($id);
+         $cate = Cate::find(18);
+         $nav_list = $cate->getAllDescendants();
 
-         $post->is_published = $post->is_published == '1' ? '0' : '1';
-         if ($post->is_published == 1) {
-             $post->published_at = now();
-         }
-         $res = $post->save();
+         $post_list = DB::table('posts')->where('cate_id', $id)
+         ->where('is_published', 1)
+         ->get();
 
-         if ($res) {
-             return response()->json([
-                 'success' => true,
-                 'message' => '修改成功',
-             ], 200);
-         } else {
-             return response()->json([
-                 'success' => false,
-                 'message' => '修改失败',
-             ], 200);
-         }
+         return response()->json([
+             'message' => 'success',
+             'success' => true,
+             'post_list' => $post_list,
+             'nav_list' => $nav_list,
+         ]);
      }
 }

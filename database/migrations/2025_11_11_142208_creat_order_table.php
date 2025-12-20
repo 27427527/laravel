@@ -23,6 +23,12 @@ return new class extends Migration
             $table->string('payment_method')->nullable()->comment('支付方式');
             $table->timestamp('paid_at')->nullable()->comment('支付时间');
             $table->text('remark')->nullable()->comment('订单备注');
+            $table->string('name')->nullable()->comment('收件人姓名');
+            $table->string('phone')->nullable()->comment('收件人电话');
+            $table->string('express_no')->nullable()->comment('快递单号');
+            $table->text('express_info')->nullable()->comment('快递信息');
+            $table->string('express_name')->nullable()->comment('快递名称');
+            $table->string('note')->nullable()->comment('后台备注');
             $table->json('address')->nullable()->comment('收货地址');
             $table->timestamps();
             $table->index('order_no');

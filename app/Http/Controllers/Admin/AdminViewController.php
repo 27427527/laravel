@@ -122,6 +122,14 @@ class AdminViewController extends Controller
 
     public function welcom(Request $request)
     {
-        return view('admin.welcom');
+        $admin = auth()->guard('admin')->user();
+
+        $post_count = \App\Models\index\Post::count();
+        $member_count = \App\Models\User::count();
+        $good_count = \App\Models\index\Good::count();
+        $order_count = \App\Models\index\Order::count();
+        $brand_count = \App\Models\index\Brand::count();
+
+        return view('admin.welcom', ['admin' => $admin, 'post_count' => $post_count, 'member_count' => $member_count, 'good_count' => $good_count, 'order_count' => $order_count, 'brand_count' => $brand_count]);
     }
 }

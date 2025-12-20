@@ -146,6 +146,7 @@ class Good extends Model
          return $this->hasMany(AttrName::class, 'good_id');
      }
 
+// 所有价格
      public function attr_prices(): HasMany
      {
          return $this->hasMany(AttrPrice::class, 'good_id');

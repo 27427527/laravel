@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignId('id'); //后台用户id
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
+            $table->integer('view_count')->default(0);
             $table->timestamps();
         });
     }

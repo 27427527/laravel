@@ -3,7 +3,7 @@
         <!-- 顶部开始 -->
         <div class="container">
             <div class="logo">
-                <a href="{{ url('admin/index') }}">X-admin v2.2</a></div>
+                <a href="{{ url('admin/index') }}">全栈电商平台</a></div>
             <div class="left_open">
                 <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
             </div>
@@ -30,7 +30,7 @@
                     </dl>
                 </li>
             </ul> --}}
-       
+
             <ul class="layui-nav right" lay-filter="">
                 <li class="layui-nav-item">
                     <a href="javascript:;">{{ $admin['real_name'] }}</a>
@@ -38,14 +38,14 @@
                         <!-- 二级菜单 -->
                         <dd>
                           <a onclick="xadmin.open('修改资料','{{ url('admin/user/info') }}')">修改资料</a>
-                        
+
                         </dd>
                         <dd>
                             <a href="{{ url('admin/logout') }}">退出</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item to-index">
-                    <a href="/">前台首页</a></li>
+                    <a target="_blank" href="http://vue.htmlsz.com/">前台首页</a></li>
             </ul>
    </div>
         <!-- 顶部结束 -->
@@ -70,13 +70,13 @@
                     <div class="layui-tab-item layui-show">
 
                         @yield('content11')
-                        
+
                     </div>
                 </div>
                 <div id="tab_show"></div>
             </div>
         </div>
         <div class="page-content-bg"></div>
-    
+
         <!-- 右侧主体结束 -->
        @include('admin.public.footer')

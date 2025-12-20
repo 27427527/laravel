@@ -18,14 +18,20 @@ class Order extends Model
         'payment_method',
         'paid_at',
         'remark',
+        'note',
         'address',
+        'name',
+        'phone',
+        'express_no',
+        'express_info',
+        'express_name',
     ];
 
     protected $casts = [
         'address' => 'array',
         'total_amount' => 'decimal:2',
         'pay_amount' => 'decimal:2',
-        'paid_at' => 'datetime',
+
     ];
 
     public $table = 'orders';
